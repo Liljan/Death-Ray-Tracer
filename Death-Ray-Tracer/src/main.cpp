@@ -5,7 +5,8 @@
 #include <iostream>
 #include <fstream>
 
-void input_handler(GLFWwindow* _window, double _dT);
+#include "Image.h"
+
 void GL_calls();
 
 int main() {
@@ -38,14 +39,9 @@ int main() {
 			ImGui::Begin("Death Ray Tracer");
 
 			ImGui::SliderFloat("Elevation", &value, 0.0f, 0.2f);
-			/*if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("A tooltip"); */
 
 			ImGui::End();
 		}
-
-		//glfw input handler
-		//input_handler(current_window, delta_time);
 
 		// __________ RENDERING SETTINGS _______
 
@@ -64,15 +60,12 @@ int main() {
 	}
 
 	ImGui_ImplGlfw_Shutdown();
+
+	Image img(100,100);
+	img.fillImage(glm::vec3(1.0f, 1.0f, 0.4f));
+	img.saveAsPPM("Brett.ppm");
+
 	return 0;
-}
-
-
-void input_handler(GLFWwindow* _window, double _dT)
-{
-	if (glfwGetKey(_window, GLFW_KEY_ESCAPE)) {
-		glfwSetWindowShouldClose(_window, GL_TRUE);
-	}
 }
 
 

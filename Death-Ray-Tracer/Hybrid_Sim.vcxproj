@@ -23,6 +23,7 @@
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
     <ClCompile Include="external\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\glfwContext.cpp" />
+    <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +32,7 @@
     <ClInclude Include="external\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
     <ClInclude Include="include\glfwContext.h" />
+    <ClInclude Include="include\Image.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -109,7 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Death-Ray-Tracer\Death-Ray-Tracer\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -125,7 +127,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Death-Ray-Tracer\Death-Ray-Tracer\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -143,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Death-Ray-Tracer\Death-Ray-Tracer\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -163,7 +165,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Big Boss\Documents\Death-Ray-Tracer\Death-Ray-Tracer\include;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external;C:\Users\Big Boss\Documents\Procedural-\Planet-Maker\external\imgui</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
