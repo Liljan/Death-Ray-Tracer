@@ -4,15 +4,23 @@
 #include "glfwContext.h"
 #include <iostream>
 #include <fstream>
-
-#include <iostream>
 #include <string>
 
 #include "Image.h"
 
-int width = 1080, height = 720;
-int rays_per_pixel = 1;
-float fov = 45.0f;
+static const struct options {
+public:
+	const int WIDTH;
+	const int HEIGHT;
+	const int RAYS_PER_PIXEL;
+	const float FOV;
+};
+
+const options DEFAULT = { 1080, 720, 1, 45.0f };
+
+int width = DEFAULT.WIDTH, height = DEFAULT.HEIGHT;
+int rays_per_pixel = DEFAULT.RAYS_PER_PIXEL;
+float fov = DEFAULT.FOV;
 
 static char file_name_buffer[64] = "file_name";
 static const char* FILE_ENDING = ".ppm";
@@ -33,6 +41,13 @@ void render() {
 	img.saveAsPPM(full_path.c_str());
 
 	render_message = "Successfully rendered image";
+}
+
+void set_default_options() {
+	width = DEFAULT.WIDTH;
+	height = DEFAULT.HEIGHT;
+	rays_per_pixel = DEFAULT.RAYS_PER_PIXEL;
+	fov = DEFAULT.FOV;
 }
 
 int main() {
@@ -75,6 +90,11 @@ int main() {
 			if (ImGui::Button("Render"))
 				render();
 
+			ImGui::SameLine();
+			if (ImGui::Button("Default")) {
+				set_default_options();
+			}
+
 			ImGui::Separator();
 			ImGui::Spacing();
 
@@ -84,7 +104,6 @@ int main() {
 		}
 
 		// __________ RENDERING SETTINGS _______
-
 		GL_calls();
 
 		glUseProgram(0);
@@ -110,11 +129,7 @@ void GL_calls()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
 	glDisable(GL_TEXTURE);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
