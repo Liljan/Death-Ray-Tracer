@@ -17,6 +17,8 @@ protected:
 	Material* _material;
 	glm::mat4x4 _local_to_world;
 	glm::mat3x4 _world_to_local;
+
+	glm::vec3 _center;
 };
 
 class Sphere : public Implicit {
@@ -26,5 +28,5 @@ public:
 
 	Intersection* intersection(Ray* ray);
 private:
-	float radius;
+	float _radius;
 };
