@@ -126,9 +126,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Image.cpp" />
+    <ClCompile Include="..\src\Implicit.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\Implicit.h" />
+    <ClInclude Include="..\include\Intersection.h" />
+    <ClInclude Include="..\include\Ray.h" />
     <ClInclude Include="..\src\Image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
