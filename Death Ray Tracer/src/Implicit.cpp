@@ -2,7 +2,7 @@
 
 #include "gtx\projection.hpp"
 
-Sphere::Sphere(glm::mat4x4 world_coords, Material * mat, float radius)
+Sphere::Sphere(const glm::mat4 & world_coords, Material * mat, float radius)
 {
 	_local_to_world = world_coords;
 	_world_to_local = glm::inverse(world_coords);
@@ -21,38 +21,25 @@ Intersection * Sphere::intersection(Ray * ray)
 {
 	glm::vec3 v = glm::normalize(_center - ray->direction);
 
-	if (glm::dot(ray->direction, v) < 0.0f)
+	float tca = glm::dot(v, ray->direction);
+
+	if (tca < 0.0f)
+	{
 		return nullptr;
+	}
 
-	glm::vec3 projection_point = glm::proj(v, ray->direction);
-	glm::vec3 center_to_projection_point = _center - projection_point;
-
-	float ctpp = glm::length(center_to_projection_point);
+	float d2 = glm::dot(v, v) - tca * tca;
 
 	// case 1: no intersection
-	if (ctpp > _radius)
+	if (d2 > _radius * _radius)
 	{
 		return nullptr;
 	}
 
-	float dist = glm::sqrt(_radius*_radius - ctpp*ctpp);
-	glm::vec3 i1;
-	glm::vec3 i2;
+	float thc = sqrt(_radius*_radius - d2);
 
-	// case 2: only one intersection
-	if (ctpp == _radius)
-	{
-		// single intersection
-		i1 = projection_point - ray->direction * dist;
-		i2 = i1;
-	}
-
-	else
-	{
-		// double intersection
-		i1 = projection_point - ray->direction * dist;
-		i2 = projection_point + ray->direction * dist;;
-	}
+	float t_front = tca - thc;
+	float t_back = tca + thc;
 
 	Intersection* intersection = new Intersection(i1, i2, glm::normalize(i1 - _center), _material->color);
 }

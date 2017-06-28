@@ -23,7 +23,7 @@ protected:
 
 class Sphere : public Implicit {
 public:
-	Sphere(glm::mat4x4 world_coords, Material* mat, float radius);
+	Sphere(const glm::mat4 & world_coords, Material* mat, float radius);
 	~Sphere();
 
 	Intersection* intersection(Ray* ray);
