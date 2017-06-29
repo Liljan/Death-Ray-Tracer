@@ -29,4 +29,5 @@ public:
 	Intersection* intersection(Ray* ray);
 private:
 	float _radius;
+	float _radius_squared;
 };

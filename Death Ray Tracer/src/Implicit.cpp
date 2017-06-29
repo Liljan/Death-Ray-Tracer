@@ -11,6 +11,7 @@ Sphere::Sphere(const glm::mat4 & world_coords, Material * mat, float radius)
 
 	_material = mat;
 	_radius = radius;
+	_radius_squared = radius * radius;
 }
 
 Sphere::~Sphere()
@@ -19,27 +20,28 @@ Sphere::~Sphere()
 
 Intersection * Sphere::intersection(Ray * ray)
 {
-	glm::vec3 v = glm::normalize(_center - ray->direction);
+	// geometric solution
+	glm::vec3 L = _center - ray->origin;
+	float tca = glm::dot(L, ray->direction);
 
-	float tca = glm::dot(v, ray->direction);
-
-	if (tca < 0.0f)
-	{
+	if (tca < 0)
 		return nullptr;
-	}
 
-	float d2 = glm::dot(v, v) - tca * tca;
+	float distance_squared = glm::dot(L, L) - tca * tca;
 
-	// case 1: no intersection
-	if (d2 > _radius * _radius)
-	{
+	// Ray overshoots sphere
+	if (distance_squared > _radius_squared)
 		return nullptr;
-	}
 
-	float thc = sqrt(_radius*_radius - d2);
+	// Ray hits the sphere
 
-	float t_front = tca - thc;
-	float t_back = tca + thc;
+	float thc = sqrt(_radius_squared - distance_squared);
 
-	Intersection* intersection = new Intersection(i1, i2, glm::normalize(i1 - _center), _material->color);
+	float t0 = tca - thc;
+	float t1 = tca + thc;
+
+	glm::vec3 front_pos = ray->origin + ray->direction * t0;
+	glm::vec3 back_pos = ray->origin + ray->direction * t1;
+
+	Intersection* intersection = new Intersection(front_pos, back_pos, glm::normalize(front_pos - _center), _material->color);
 }

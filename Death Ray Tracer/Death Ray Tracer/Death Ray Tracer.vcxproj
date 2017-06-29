@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\Image.cpp" />
     <ClCompile Include="..\src\Implicit.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
@@ -132,12 +133,13 @@
     <ClCompile Include="..\src\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\Camera.h" />
+    <ClInclude Include="..\include\Image.h" />
     <ClInclude Include="..\include\Implicit.h" />
     <ClInclude Include="..\include\Intersection.h" />
     <ClInclude Include="..\include\Light.h" />
     <ClInclude Include="..\include\Ray.h" />
     <ClInclude Include="..\include\World.h" />
-    <ClInclude Include="..\src\Image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

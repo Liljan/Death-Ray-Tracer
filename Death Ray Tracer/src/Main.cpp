@@ -4,6 +4,9 @@
 
 #include "Image.h"
 #include "Implicit.h"
+#include "Camera.h"
+#include "World.h"
+
 
 namespace Settings {
 	const int IMG_WIDTH = 1920;
@@ -11,16 +14,41 @@ namespace Settings {
 
 	const int RAYS_PER_PIXEL = 1;
 
-	const float FOV = 45.0f;
+	const float FOV = glm::radians(45.0f);
 }
 
 namespace Color {
 	glm::vec3 RED(1.f, 0.f, 0.f);
 }
 
+void ray_trace(World* world, Camera* camera)
+{
+	float aspect_ratio = Settings::IMG_WIDTH / (float)Settings::IMG_HEIGHT;
+	float scale = glm::tan(Settings::FOV * 0.5f);
+
+	glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
+
+	const float width = Settings::IMG_WIDTH;
+	const float height = Settings::IMG_HEIGHT;
+
+	for (size_t h = 0; h < height; h++)
+	{
+		for (size_t w = 0; w < width; w++)
+		{
+			float x = (2.f * (w + 0.5f) / width - 1.f) * aspect_ratio * scale;
+			float y = (1.f - 2.f * (h + 0.5f) / height) * scale;
+
+			glm::vec3 dir = glm::vec4(x, y, -1.f, 1.f) * camera->get_camera_to_world();
+			dir = glm::normalize(dir);
+
+			Ray* r = new Ray(origin, dir, 1.0f);
+		}
+	}
+}
+
 int main()
 {
-	Ray* test_ray = new Ray(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1.0f), 1.0f);
+	Ray* test_ray = new Ray(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.0f), 1.0f);
 
 	Material* m = new Material;
 	m->color = Color::RED;
