@@ -69,19 +69,20 @@ Image* ray_trace(World* world, Camera* camera)
 
 					// Phong shading model for local lighting
 
-					glm::vec3 s = glm::normalize(light->position - intersection->intersection_front);
-					glm::vec3 r = glm::reflect(s, intersection->surface_normal);
+					glm::vec3 s_s = glm::normalize(light->position - intersection->intersection_front);
+					glm::vec3 r_s = glm::reflect(s_s, intersection->surface_normal);
 
 					Material* mat = geometry->get_material();
 					float diffuse;
 					float specular;
 
-					diffuse = mat->diffuse * glm::max(glm::dot(s, intersection->surface_normal), 0.0f);
-					specular = mat->specular * glm::pow(glm::max(glm::dot(r,camera_direction),0.0f), mat->shininess);
+					diffuse = mat->diffuse * glm::max(glm::dot(s_s, intersection->surface_normal), 0.0f);
+					specular = mat->specular * glm::pow(glm::max(glm::dot(r_s,camera_direction),0.0f), mat->shininess);
 
-					glm::vec3 local_light = (mat->ambient + diffuse + specular) * light->intensity * mat->color;
+					glm::vec3 diffuse_component = (mat->ambient + diffuse) * light->intensity * mat->color;
+					glm::vec3 specular_component = glm::vec3(specular);
 
-					image->set_pixel(w, h, local_light);
+					image->set_pixel(w, h, diffuse_component + specular);
 				}
 
 
@@ -115,7 +116,7 @@ int main()
 	red_mat.ambient = blue_mat.ambient = white_mat.ambient = 0.1f;
 	red_mat.diffuse = blue_mat.diffuse = white_mat.diffuse = 0.7f;
 	red_mat.specular = blue_mat.specular = white_mat.specular = 1.0f;
-	red_mat.shininess = blue_mat.shininess = white_mat.shininess = 100.0f;
+	red_mat.shininess = blue_mat.shininess = white_mat.shininess = 32.0f;
 
 	// Geometry
 	Sphere sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)), &blue_mat, 1.0f);
