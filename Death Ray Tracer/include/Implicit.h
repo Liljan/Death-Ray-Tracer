@@ -6,12 +6,19 @@
 
 struct Material {
 	glm::vec3 color;
+	float ambient;
+	float diffuse;
+	float specular;
+	float shininess;
 };
 
 class Implicit {
 public:
 	virtual ~Implicit() {};
 	virtual Intersection* intersection(Ray* ray) = 0;
+
+	Material* get_material() { return _material; }
+
 protected:
 
 	Material* _material;

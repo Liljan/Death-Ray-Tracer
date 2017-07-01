@@ -9,8 +9,8 @@
 #include "Light.h"
 
 namespace Settings {
-	const int IMG_WIDTH = 4;
-	const int IMG_HEIGHT = 4;
+	const int IMG_WIDTH = 1920;
+	const int IMG_HEIGHT = 1080;
 
 	const int RAYS_PER_PIXEL = 1;
 
@@ -42,10 +42,13 @@ Image* ray_trace(World* world, Camera* camera)
 			float x = (2.0f * (w + 0.5f) / width - 1.0f) * aspect_ratio * scale;
 			float y = (1.0f - 2.0f * (h + 0.5f) / height) * scale;
 
-			glm::vec3 dir = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_camera_to_world();
-			dir = glm::normalize(dir);
+			glm::vec3 camera_direction = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_camera_to_world();
+			camera_direction = glm::normalize(camera_direction);
 
-			Ray r(origin, dir, 1.0f);
+			Ray r(origin, camera_direction, 1.0f);
+
+			// base color black for pixel...
+			image->set_pixel(w, h, glm::vec3(0.f, 0.f, 0.f));
 
 			// test intersection with all objects
 			for (size_t i = 0; i < world->get_number_of_geometry(); i++)
@@ -53,9 +56,34 @@ Image* ray_trace(World* world, Camera* camera)
 				Implicit* geometry = world->get_geometry(i);
 				Intersection* intersection = geometry->intersection(&r);
 				if (intersection == nullptr)
-					image->set_pixel(w, h, glm::vec3(0.f, 0.f, 0.f));
-				else
-					image->set_pixel(w, h, intersection->color);
+					continue;
+
+				//image->set_pixel(w, h, intersection->color);
+				for (size_t l = 0; l < world->get_number_of_lights(); l++)
+				{
+					Light* light = world->get_light(l);
+
+					// occlusion test with shadow rays
+
+					// if it is visible...
+
+					// Phong shading model for local lighting
+
+					glm::vec3 s = glm::normalize(light->position - intersection->intersection_front);
+					glm::vec3 r = glm::reflect(s, intersection->surface_normal);
+
+					Material* mat = geometry->get_material();
+					float diffuse;
+					float specular;
+
+					diffuse = mat->diffuse * glm::max(glm::dot(s, intersection->surface_normal), 0.0f);
+					specular = mat->specular * glm::pow(glm::max(glm::dot(r,camera_direction),0.0f), mat->shininess);
+
+					glm::vec3 local_light = (mat->ambient + diffuse + specular) * light->intensity * mat->color;
+
+					image->set_pixel(w, h, local_light);
+				}
+
 
 				delete intersection;
 			}
@@ -76,13 +104,18 @@ int main()
 
 	// Light(s)
 	World* world = new World();
-	world->add_light(new Light(glm::vec3(10.0f, 1.0f, 1.0f), Color::WHITE, 1.0f));
+	world->add_light(new Light(glm::vec3(0.0f, 1.0f, -1.0f), Color::WHITE, 1.0f));
 
 	// Materials
 	Material red_mat, blue_mat, white_mat;
 	red_mat.color = Color::RED;
 	blue_mat.color = Color::BLUE;
 	white_mat.color = Color::WHITE;
+
+	red_mat.ambient = blue_mat.ambient = white_mat.ambient = 0.1f;
+	red_mat.diffuse = blue_mat.diffuse = white_mat.diffuse = 0.7f;
+	red_mat.specular = blue_mat.specular = white_mat.specular = 1.0f;
+	red_mat.shininess = blue_mat.shininess = white_mat.shininess = 100.0f;
 
 	// Geometry
 	Sphere sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)), &blue_mat, 1.0f);
