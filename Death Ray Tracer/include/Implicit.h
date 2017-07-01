@@ -9,6 +9,7 @@ class Implicit {
 public:
 	virtual ~Implicit() {};
 	virtual Intersection* intersection(Ray* ray) = 0;
+	glm::vec3 get_center() { return _center; }
 
 	Material* get_material() { return _material; }
 
