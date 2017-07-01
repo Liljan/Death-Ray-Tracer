@@ -4,13 +4,6 @@
 #include "Ray.h"
 #include "Intersection.h"
 
-struct Material {
-	glm::vec3 color;
-	float ambient;
-	float diffuse;
-	float specular;
-	float shininess;
-};
 
 class Implicit {
 public:

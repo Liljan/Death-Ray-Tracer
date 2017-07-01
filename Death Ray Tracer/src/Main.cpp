@@ -50,44 +50,66 @@ Image* ray_trace(World* world, Camera* camera)
 			// base color black for pixel...
 			image->set_pixel(w, h, glm::vec3(0.f, 0.f, 0.f));
 
-			// test intersection with all objects
+			float distance_from_camera = INFINITY;
+			Intersection* closest_intersection = nullptr;
+
+			// Intersection test...
 			for (size_t i = 0; i < world->get_number_of_geometry(); i++)
 			{
 				Implicit* geometry = world->get_geometry(i);
-				Intersection* intersection = geometry->intersection(&r);
-				if (intersection == nullptr)
+				Intersection* current_intersection = geometry->intersection(&r);
+
+				if (current_intersection == nullptr)
 					continue;
 
-				//image->set_pixel(w, h, intersection->color);
-				for (size_t l = 0; l < world->get_number_of_lights(); l++)
+				if (current_intersection->distance_from_camera < distance_from_camera)
 				{
-					Light* light = world->get_light(l);
-
-					// occlusion test with shadow rays
-
-					// if it is visible...
-
-					// Phong shading model for local lighting
-
-					glm::vec3 s_s = glm::normalize(light->position - intersection->intersection_front);
-					glm::vec3 r_s = glm::reflect(s_s, intersection->surface_normal);
-
-					Material* mat = geometry->get_material();
-					float diffuse;
-					float specular;
-
-					diffuse = mat->diffuse * glm::max(glm::dot(s_s, intersection->surface_normal), 0.0f);
-					specular = mat->specular * glm::pow(glm::max(glm::dot(r_s,camera_direction),0.0f), mat->shininess);
-
-					glm::vec3 diffuse_component = (mat->ambient + diffuse) * light->intensity * mat->color;
-					glm::vec3 specular_component = glm::vec3(specular);
-
-					image->set_pixel(w, h, diffuse_component + specular);
+					delete closest_intersection;
+					closest_intersection = current_intersection;
+					distance_from_camera = current_intersection->distance_from_camera;
+					continue;
 				}
 
-
-				delete intersection;
+				// else...
+				delete current_intersection;
 			}
+
+			if (closest_intersection == nullptr)
+				continue;
+
+			// Shadow ray obstruction test...
+			
+			// TODO
+
+			// Local color...
+
+			for (size_t l = 0; l < world->get_number_of_lights(); l++)
+			{
+				Light* light = world->get_light(l);
+
+				// occlusion test with shadow rays
+
+				// if it is visible...
+
+				// Phong shading model for local lighting
+
+				glm::vec3 s_s = glm::normalize(light->position - closest_intersection->intersection_front);
+				glm::vec3 r_s = glm::reflect(s_s, closest_intersection->surface_normal);
+
+				Material* mat = closest_intersection->material;
+				float diffuse;
+				float specular;
+
+				diffuse = mat->diffuse * glm::max(glm::dot(s_s, closest_intersection->surface_normal), 0.0f);
+				specular = mat->specular * glm::pow(glm::max(glm::dot(r_s, camera_direction), 0.0f), mat->shininess);
+
+				glm::vec3 diffuse_component = (mat->ambient + diffuse) * light->intensity * mat->color;
+				glm::vec3 specular_component = glm::vec3(specular);
+
+				image->set_pixel(w, h, diffuse_component + specular);
+			}
+
+			delete closest_intersection;
 		}
 	}
 
@@ -105,7 +127,7 @@ int main()
 
 	// Light(s)
 	World* world = new World();
-	world->add_light(new Light(glm::vec3(0.0f, 1.0f, -1.0f), Color::WHITE, 1.0f));
+	world->add_light(new Light(glm::vec3(0.0f, 5.0f, -1.0f), Color::WHITE, 1.0f));
 
 	// Materials
 	Material red_mat, blue_mat, white_mat;
@@ -119,9 +141,12 @@ int main()
 	red_mat.shininess = blue_mat.shininess = white_mat.shininess = 32.0f;
 
 	// Geometry
-	Sphere sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)), &blue_mat, 1.0f);
-
-	world->add_geometry(&sphere);
+	Sphere sphere_01(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)), &blue_mat, 1.0f);
+	world->add_geometry(&sphere_01);
+	Sphere sphere_02(glm::translate(glm::mat4(1.0f), glm::vec3(3.f, 1.f, 10.f)), &red_mat, 1.0f);
+	world->add_geometry(&sphere_02);
+	Sphere sphere_03(glm::translate(glm::mat4(1.0f), glm::vec3(-4.f,-1.f, 12.f)), &white_mat, 1.0f);
+	world->add_geometry(&sphere_03);
 
 	Image* image = ray_trace(world, camera);
 	image->save_PPM("test_render");

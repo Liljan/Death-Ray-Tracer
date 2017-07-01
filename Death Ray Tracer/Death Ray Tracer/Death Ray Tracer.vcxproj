@@ -138,6 +138,7 @@
     <ClInclude Include="..\include\Implicit.h" />
     <ClInclude Include="..\include\Intersection.h" />
     <ClInclude Include="..\include\Light.h" />
+    <ClInclude Include="..\include\Material.h" />
     <ClInclude Include="..\include\Ray.h" />
     <ClInclude Include="..\include\World.h" />
   </ItemGroup>
