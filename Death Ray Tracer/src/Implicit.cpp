@@ -16,6 +16,7 @@ Sphere::Sphere(const glm::mat4 & world_coords, Material * mat, float radius)
 
 Sphere::~Sphere()
 {
+
 }
 
 Intersection * Sphere::intersection(Ray * ray)
@@ -43,5 +44,5 @@ Intersection * Sphere::intersection(Ray * ray)
 	glm::vec3 front_pos = ray->origin + ray->direction * t0;
 	glm::vec3 back_pos = ray->origin + ray->direction * t1;
 
-	Intersection* intersection = new Intersection(front_pos, back_pos, glm::normalize(front_pos - _center), _material->color);
+	return new Intersection(front_pos, back_pos, glm::normalize(front_pos - _center), _material->color);
 }

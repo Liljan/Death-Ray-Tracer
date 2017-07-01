@@ -6,7 +6,7 @@ World::World()
 
 World::~World()
 {
-	auto geometryIterator = m_geometry.begin();
+	/*auto geometryIterator = m_geometry.begin();
 	while (geometryIterator != m_geometry.end()) {
 		delete *geometryIterator;
 		geometryIterator++;
@@ -16,7 +16,7 @@ World::~World()
 	while (lightIterator != m_lights.end()) {
 		delete *lightIterator;
 		lightIterator++;
-	}
+	}*/
 }
 
 void World::add_geometry(Implicit * geometry)
