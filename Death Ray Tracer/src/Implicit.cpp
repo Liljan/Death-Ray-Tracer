@@ -44,5 +44,8 @@ Intersection * Sphere::intersection(Ray * ray)
 	glm::vec3 front_pos = ray->origin + ray->direction * t0;
 	glm::vec3 back_pos = ray->origin + ray->direction * t1;
 
-	return new Intersection(t0, front_pos, back_pos, glm::normalize(front_pos - _center), _material);
+	Intersection* intersection = new Intersection;
+	*intersection = { t0, front_pos, back_pos, glm::normalize(front_pos - _center), _material };
+
+	return intersection;
 }

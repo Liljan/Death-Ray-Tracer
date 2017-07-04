@@ -46,41 +46,44 @@ Image* ray_trace(World* world, Camera* camera)
 			glm::vec3 camera_direction = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_camera_to_world();
 			camera_direction = glm::normalize(camera_direction);
 
-			Ray r(origin, camera_direction, 1.0f);
+			Ray ray = { origin,camera_direction };
 
 			// base color black for pixel...
-			image->set_pixel(w, h, glm::vec3(0.f, 0.f, 0.f));
+			glm::vec3 final_color(0.f,0.f,0.f);
 
 			float distance_from_camera = INFINITY;
 			Intersection* closest_intersection = nullptr;
-			int closest_geometry_index;
+			size_t closest_geometry_index;
 
-			// Intersection test...
+			// ------- INTERSECTION TEST  ------- //
 			for (size_t i = 0; i < world->get_number_of_geometry(); i++)
 			{
 				Implicit* geometry = world->get_geometry(i);
-				Intersection* current_intersection = geometry->intersection(&r);
+				Intersection* current_intersection = geometry->intersection(&ray);
 
+				// If no intersection...
 				if (current_intersection == nullptr)
 					continue;
 
-				if (current_intersection->distance_from_camera < distance_from_camera)
+				// If there is an intersection which is closer...
+				if (current_intersection->distance < distance_from_camera)
 				{
 					delete closest_intersection;
 					closest_intersection = current_intersection;
-					distance_from_camera = current_intersection->distance_from_camera;
+					distance_from_camera = current_intersection->distance;
 					closest_geometry_index = i;
 					continue;
 				}
 
-				// else...
+				// If there is an intersection which is further away...
 				delete current_intersection;
 			}
 
 			if (closest_intersection == nullptr)
 				continue;
 
-			// Shadow ray obstruction test...
+			// ------- SHADOW RAY OBSTRUCTION TEST  ------- //
+
 			bool is_obscured = false;
 
 			for (size_t i = 0; i < world->get_number_of_geometry(); i++)
@@ -90,9 +93,9 @@ Image* ray_trace(World* world, Camera* camera)
 
 				Implicit* geometry = world->get_geometry(i);
 
-				glm::vec3 direction = glm::normalize(world->get_light(0)->position - closest_intersection->intersection_front);
+				glm::vec3 direction = glm::normalize(world->get_light(0)->position - closest_intersection->front);
 
-				Ray shadow_ray(closest_intersection->intersection_front, direction, 1.0f);
+				Ray shadow_ray = { closest_intersection->front, direction };
 
 				Intersection* intersection = geometry->intersection(&shadow_ray);
 
@@ -107,34 +110,32 @@ Image* ray_trace(World* world, Camera* camera)
 			if (is_obscured)
 				continue;
 
-
-			// Local color...
+			// ------- LOCAL COLOR ------- //
 
 			for (size_t l = 0; l < world->get_number_of_lights(); l++)
 			{
 				Light* light = world->get_light(l);
 
-				// occlusion test with shadow rays
-
-				// if it is visible...
-
 				// Phong shading model for local lighting
 
-				glm::vec3 s_s = glm::normalize(light->position - closest_intersection->intersection_front);
-				glm::vec3 r_s = glm::reflect(s_s, closest_intersection->surface_normal);
+				glm::vec3 s_s = glm::normalize(light->position - closest_intersection->front);
+				glm::vec3 r_s = glm::reflect(s_s, closest_intersection->normal);
 
 				Material* mat = closest_intersection->material;
 				float diffuse;
 				float specular;
 
-				diffuse = mat->diffuse * glm::max(glm::dot(s_s, closest_intersection->surface_normal), 0.0f);
+				diffuse = mat->diffuse * glm::max(glm::dot(s_s, closest_intersection->normal), 0.0f);
 				specular = mat->specular * glm::pow(glm::max(glm::dot(r_s, camera_direction), 0.0f), mat->shininess);
 
 				glm::vec3 diffuse_component = (mat->ambient + diffuse) * light->intensity * mat->color;
 				glm::vec3 specular_component = glm::vec3(specular);
 
 				image->set_pixel(w, h, diffuse_component + specular);
+				final_color += diffuse_component + specular;
 			}
+
+			image->set_pixel(x, y, final_color);
 
 			delete closest_intersection;
 		}
@@ -147,25 +148,21 @@ int main()
 {
 	// Detect memery leaks.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	// Camera(s)
 	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.f)));
 
 	// Light(s)
 	World* world = new World();
-	world->add_light(new Light(glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f));
+	//world->add_light(&Light(glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f));
+
+	Light l = { glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f };
+	world->add_light(&l);
 
 	// Materials
-	Material red_mat, blue_mat, white_mat;
-	red_mat.color = Color::RED;
-	blue_mat.color = Color::BLUE;
-	white_mat.color = Color::WHITE;
-
-	red_mat.ambient = blue_mat.ambient = white_mat.ambient = 0.1f;
-	red_mat.diffuse = blue_mat.diffuse = white_mat.diffuse = 0.7f;
-	red_mat.specular = blue_mat.specular = white_mat.specular = 1.0f;
-	red_mat.shininess = blue_mat.shininess = white_mat.shininess = 32.0f;
+	Material red_mat = { Color::RED, 0.1f,0.7f,1.0f,32.0f };
+	Material blue_mat = { Color::BLUE, 0.1f,0.7f,1.0f,32.0f };
+	Material white_mat = { Color::WHITE, 0.1f,0.7f,1.0f,32.0f };
 
 	// Geometry
 	Sphere sphere_01(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &blue_mat, 1.0f);
