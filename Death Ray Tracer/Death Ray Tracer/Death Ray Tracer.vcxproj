@@ -129,7 +129,6 @@
     <ClCompile Include="..\src\Image.cpp" />
     <ClCompile Include="..\src\Implicit.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
-    <ClCompile Include="..\src\Ray.cpp" />
     <ClCompile Include="..\src\World.cpp" />
   </ItemGroup>
   <ItemGroup>
