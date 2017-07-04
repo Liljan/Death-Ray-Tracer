@@ -2,6 +2,9 @@
 #include <glm.hpp>
 #include <gtx\transform.hpp>
 
+#include <omp.h>
+#include <time.h>
+
 #include "Image.h"
 #include "Implicit.h"
 #include "Camera.h"
@@ -32,12 +35,14 @@ Image* ray_trace(World* world, Camera* camera)
 
 	glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
 
-	const float width = Settings::IMG_WIDTH;
-	const float height = Settings::IMG_HEIGHT;
+	const int width = Settings::IMG_WIDTH;
+	const int height = Settings::IMG_HEIGHT;
 
-	for (size_t h = 0; h < height; h++)
+	#pragma omp parallel
+	#pragma omp for
+	for (int h = 0; h < height; h++)
 	{
-		for (size_t w = 0; w < width; w++)
+		for (int w = 0; w < width; w++)
 		{
 			float x = (2.0f * (w + 0.5f) / width - 1.0f) * aspect_ratio * scale;
 			float y = (1.0f - 2.0f * (h + 0.5f) / height) * scale;
@@ -49,7 +54,7 @@ Image* ray_trace(World* world, Camera* camera)
 			Ray ray = { origin,camera_direction };
 
 			// base color black for pixel...
-			glm::vec3 final_color(0.f,0.f,0.f);
+			glm::vec3 final_color(0.f, 0.f, 0.f);
 
 			float distance_from_camera = INFINITY;
 			Intersection* closest_intersection = nullptr;
@@ -148,6 +153,8 @@ int main()
 {
 	// Detect memery leaks.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	omp_set_num_threads(4);
 
 	// Camera(s)
 	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.f)));
