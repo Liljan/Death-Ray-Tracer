@@ -4,7 +4,6 @@
 #include "Ray.h"
 #include "Intersection.h"
 
-
 class Implicit {
 public:
 	virtual ~Implicit() {};
@@ -17,7 +16,7 @@ protected:
 
 	Material* _material;
 	glm::mat4x4 _local_to_world;
-	glm::mat3x4 _world_to_local;
+	glm::mat4x4 _world_to_local;
 
 	glm::vec3 _center;
 };
@@ -31,4 +30,26 @@ public:
 private:
 	float _radius;
 	float _radius_squared;
+};
+
+class Plane : public Implicit {
+public:
+	Plane(const glm::mat4 & world_coords, Material* mat);
+	~Plane();
+
+	Intersection* intersection(Ray* ray);
+private:
+	glm::vec3 normal;
+
+	glm::vec3 p0, p1, p2, p3;
+
+	/*
+
+	p0_________p3
+	|           |
+	|		    |
+	|		    |
+	p1_________p2
+	
+	*/
 };

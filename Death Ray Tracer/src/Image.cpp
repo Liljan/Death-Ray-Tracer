@@ -1,5 +1,7 @@
 #include "Image.h"
 
+#include <omp.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -27,9 +29,11 @@ void Image::set_pixel(size_t x, size_t y, glm::vec3 & color)
 
 void Image::fill_image(glm::vec3 & color)
 {
-	for (size_t y = 0; y < m_height; y++)
+	#pragma omp parallel
+	#pragma omp for
+	for (int y = 0; y < m_height; y++)
 	{
-		for (size_t x = 0; x < m_width; x++)
+		for (int x = 0; x < m_width; x++)
 		{
 			set_pixel(x, y, color);
 		}
@@ -56,9 +60,8 @@ void Image::save_PPM(const char* file_name)
 		float* current_pixel = m_pixel_values;
 
 		// loop over each pixel in the image, clamp from 0 to 255, convert to char format and write to file. 
-
-		for (size_t h = 0; h < m_height; ++h) {
-			for (size_t w = 0; w < m_width; ++w) {
+		for (int h = 0; h < m_height; ++h) {
+			for (int w = 0; w < m_width; ++w) {
 
 				r = std::max(0.0f, roundf(std::min(1.f, current_pixel[0]) * 255));
 				g = std::max(0.0f, roundf(std::min(1.f, current_pixel[1]) * 255));

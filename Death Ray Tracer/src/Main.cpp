@@ -156,6 +156,10 @@ int main()
 
 	omp_set_num_threads(4);
 
+	// Time measurement
+	clock_t t1, t2;
+	t1 = clock();
+
 	// Camera(s)
 	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.f)));
 
@@ -179,6 +183,9 @@ int main()
 	Sphere sphere_03(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 15.f)), &white_mat, 5.0f);
 	world->add_geometry(&sphere_03);
 
+	Plane floor_plane(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &white_mat);
+	world->add_geometry(&floor_plane);
+
 	Image* image = ray_trace(world, camera);
 	image->save_PPM("test_render");
 
@@ -186,6 +193,11 @@ int main()
 	delete camera;
 	delete world;
 	delete image;
+
+	t2 = clock();
+	float diff = (float)t2 - (float)t1;
+	diff /= CLOCKS_PER_SEC;
+	std::cout << "Total time: " << diff;
 
 	return 0;
 }
