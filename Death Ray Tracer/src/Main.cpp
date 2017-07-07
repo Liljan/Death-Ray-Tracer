@@ -38,8 +38,8 @@ Image* ray_trace(World* world, Camera* camera)
 	const int width = Settings::IMG_WIDTH;
 	const int height = Settings::IMG_HEIGHT;
 
-	#pragma omp parallel
-	#pragma omp for
+#pragma omp parallel
+#pragma omp for
 	for (int h = 0; h < height; h++)
 	{
 		for (int w = 0; w < width; w++)
@@ -176,14 +176,19 @@ int main()
 	Material white_mat = { Color::WHITE, 0.1f,0.7f,1.0f,32.0f };
 
 	// Geometry
-	Sphere sphere_01(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &blue_mat, 1.0f);
+	/*Sphere sphere_01(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &blue_mat, 1.0f);
 	world->add_geometry(&sphere_01);
 	Sphere sphere_02(glm::translate(glm::mat4(1.0f), glm::vec3(3.f, 1.f, 10.f)), &red_mat, 1.0f);
 	world->add_geometry(&sphere_02);
 	Sphere sphere_03(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 15.f)), &white_mat, 5.0f);
-	world->add_geometry(&sphere_03);
+	world->add_geometry(&sphere_03); */
 
-	Plane floor_plane(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &white_mat);
+	glm::mat4 plane_transform =
+		glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)) *
+		glm::rotate(glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
+		glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
+
+	Plane floor_plane(plane_transform, &white_mat);
 	world->add_geometry(&floor_plane);
 
 	Image* image = ray_trace(world, camera);
