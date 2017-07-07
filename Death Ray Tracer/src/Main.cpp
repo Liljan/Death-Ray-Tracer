@@ -168,24 +168,17 @@ int main()
 
 	// Light(s)
 	World* world = new World();
-	//world->add_light(&Light(glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f));
 
 	Light l = { glm::vec3(0.5f, 0.5f, 0.0f), Color::WHITE, 1.0f };
 	world->add_light(&l);
 
 	// Materials
-	Material red_mat = { Color::RED, 0.1f,0.7f,1.0f,32.0f };
-	Material green_mat = { Color::GREEN, 0.1f,0.7f,1.0f,32.0f };
-	Material blue_mat = { Color::BLUE, 0.1f,0.7f,1.0f,32.0f };
-	Material white_mat = { Color::WHITE, 0.1f,0.7f,1.0f,32.0f };
+	Material red_mat = { Color::RED, 0.1f, 1.0f, 1.0f, 128.0f };
+	Material green_mat = { Color::GREEN, 0.1f, 1.0f, 1.0f, 128.0f };
+	Material blue_mat = { Color::BLUE, 0.1f, 1.0f, 1.0f, 128.0f };
+	Material white_mat = { Color::WHITE, 0.1f, 1.0f, 1.0f, 128.0f };
 
 	// Geometry
-	/*Sphere sphere_01(glm::translate(glm::mat4(1.0f), glm::vec3(1.f, 0.f, 5.f)), &blue_mat, 1.0f);
-	world->add_geometry(&sphere_01);
-	Sphere sphere_02(glm::translate(glm::mat4(1.0f), glm::vec3(3.f, 1.f, 10.f)), &red_mat, 1.0f);
-	world->add_geometry(&sphere_02);
-	Sphere sphere_03(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 15.f)), &white_mat, 5.0f);
-	world->add_geometry(&sphere_03); */
 
 	glm::vec3 v0 = glm::vec3(0, 0, 0);
 	glm::vec3 v1 = glm::vec3(1, 0, 0);
@@ -203,9 +196,9 @@ int main()
 	// Top
 	world->add_geometry(new Plane(v4, v5, v6, v7, &white_mat));
 	// Left
-	world->add_geometry(new Plane(v0, v4, v7, v2, &green_mat));
+	world->add_geometry(new Plane(v0, v4, v7, v2, &red_mat));
 	// Right
-	world->add_geometry(new Plane(v1, v2, v6, v5, &red_mat));
+	world->add_geometry(new Plane(v1, v2, v6, v5, &green_mat));
 
 	// Spheres
 	world->add_geometry(new Sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.2f, 0.3f, 0.7f)), &blue_mat, 0.1f));
