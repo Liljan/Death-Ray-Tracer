@@ -35,6 +35,7 @@ private:
 class Plane : public Implicit {
 public:
 	Plane(const glm::mat4 & world_coords, Material* mat);
+	Plane(const glm::vec3 p0, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3, Material* mat);
 	~Plane();
 
 	Intersection* intersection(Ray* ray);
@@ -50,6 +51,6 @@ private:
 	|		    |
 	|		    |
 	p1_________p2
-	
+
 	*/
 };

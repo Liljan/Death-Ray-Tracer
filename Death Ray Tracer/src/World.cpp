@@ -6,12 +6,12 @@ World::World()
 
 World::~World()
 {
-	/*auto geometryIterator = m_geometry.begin();
+	auto geometryIterator = m_geometry.begin();
 	while (geometryIterator != m_geometry.end()) {
 		delete *geometryIterator;
 		geometryIterator++;
 	}
-
+	/*
 	auto lightIterator = m_lights.begin();
 	while (lightIterator != m_lights.end()) {
 		delete *lightIterator;

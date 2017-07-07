@@ -65,6 +65,16 @@ Plane::Plane(const glm::mat4x4 & world_coords, Material * mat)
 	_material = mat;
 }
 
+Plane::Plane(const glm::vec3 p0, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3, Material * mat)
+{
+	this->p0 = p0;
+	this->p1 = p1;
+	this->p2 = p2;
+	this->p3 = p3;
+
+	_material = mat;
+}
+
 Plane::~Plane()
 {
 }
@@ -90,7 +100,7 @@ Intersection * Plane::intersection(Ray * ray)
 
 	float d = -glm::dot(normal, p0);
 
-	float t = -(glm::dot(normal,ray->origin) + d) / (n_dot_r);
+	float t = -(glm::dot(normal, ray->origin) + d) / (n_dot_r);
 
 	// Behind test
 	if (t < 0.0f)
@@ -104,10 +114,10 @@ Intersection * Plane::intersection(Ray * ray)
 
 	// Side 0
 	glm::vec3 p0p = p - p0;
-	glm::vec3 s0 = glm::cross(p0p1,p0p);
+	glm::vec3 s0 = glm::cross(p0p1, p0p);
 	if (glm::dot(normal, s0) < 0.0f)
 		return nullptr;
-	
+
 	// Side 1
 	glm::vec3 p1p = p - p1;
 	glm::vec3 s1 = glm::cross(p1p2, p1p);

@@ -22,6 +22,7 @@ namespace Settings {
 
 namespace Color {
 	glm::vec3 RED(1.f, 0.f, 0.f);
+	glm::vec3 GREEN(0.0f, 1.0f, 0.0f);
 	glm::vec3 BLUE(0.0f, 0.0f, 1.0f);
 	glm::vec3 WHITE(1.0f, 1.0f, 1.0f);
 }
@@ -33,7 +34,9 @@ Image* ray_trace(World* world, Camera* camera)
 	float aspect_ratio = Settings::IMG_WIDTH / (float)Settings::IMG_HEIGHT;
 	float scale = glm::tan(Settings::FOV * 0.5f);
 
-	glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
+	//glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
+	// For debugging purposes
+	glm::vec3 origin = glm::vec3(0.5f, 0.5f, -1.f);
 
 	const int width = Settings::IMG_WIDTH;
 	const int height = Settings::IMG_HEIGHT;
@@ -161,17 +164,18 @@ int main()
 	t1 = clock();
 
 	// Camera(s)
-	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.f)));
+	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -1.f)));
 
 	// Light(s)
 	World* world = new World();
 	//world->add_light(&Light(glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f));
 
-	Light l = { glm::vec3(0.0f, 8.0f, -3.0f), Color::WHITE, 1.0f };
+	Light l = { glm::vec3(0.5f, 0.5f, 0.0f), Color::WHITE, 1.0f };
 	world->add_light(&l);
 
 	// Materials
 	Material red_mat = { Color::RED, 0.1f,0.7f,1.0f,32.0f };
+	Material green_mat = { Color::GREEN, 0.1f,0.7f,1.0f,32.0f };
 	Material blue_mat = { Color::BLUE, 0.1f,0.7f,1.0f,32.0f };
 	Material white_mat = { Color::WHITE, 0.1f,0.7f,1.0f,32.0f };
 
@@ -183,13 +187,28 @@ int main()
 	Sphere sphere_03(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 15.f)), &white_mat, 5.0f);
 	world->add_geometry(&sphere_03); */
 
-	glm::mat4 plane_transform =
-		glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 5.f)) *
-		glm::rotate(glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
+	glm::vec3 v0 = glm::vec3(0, 0, 0);
+	glm::vec3 v1 = glm::vec3(1, 0, 0);
+	glm::vec3 v2 = glm::vec3(1, 0, 1);
+	glm::vec3 v3 = glm::vec3(0, 0, 1);
+	glm::vec3 v4 = glm::vec3(0, 1, 0);
+	glm::vec3 v5 = glm::vec3(1, 1, 0);
+	glm::vec3 v6 = glm::vec3(1, 1, 1);
+	glm::vec3 v7 = glm::vec3(0, 1, 1);
 
-	Plane floor_plane(plane_transform, &white_mat);
-	world->add_geometry(&floor_plane);
+	// Back
+	world->add_geometry(new Plane(v2, v3, v7, v6, &white_mat));
+	// Bottom
+	world->add_geometry(new Plane(v0, v3, v2, v1, &white_mat));
+	// Top
+	world->add_geometry(new Plane(v4, v5, v6, v7, &white_mat));
+	// Left
+	world->add_geometry(new Plane(v0, v4, v7, v2, &green_mat));
+	// Right
+	world->add_geometry(new Plane(v1, v2, v6, v5, &red_mat));
+
+	// Spheres
+	world->add_geometry(new Sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.2f, 0.3f, 0.7f)), &blue_mat, 0.1f));
 
 	Image* image = ray_trace(world, camera);
 	image->save_PPM("test_render");
