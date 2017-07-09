@@ -36,7 +36,7 @@ Image* ray_trace(World* world, Camera* camera)
 
 	//glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
 	// For debugging purposes
-	glm::vec3 origin = glm::vec3(0.5f, 0.5f, -1.f);
+	glm::vec3 origin = camera->get_position();
 
 	const int width = Settings::IMG_WIDTH;
 	const int height = Settings::IMG_HEIGHT;
@@ -51,7 +51,7 @@ Image* ray_trace(World* world, Camera* camera)
 			float y = (1.0f - 2.0f * (h + 0.5f) / height) * scale;
 
 			glm::vec3 camera_position = glm::vec3(x, y, origin.z);
-			glm::vec3 camera_direction = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_camera_to_world();
+			glm::vec3 camera_direction = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_rotation();
 			camera_direction = glm::normalize(camera_direction);
 
 			Ray ray = { origin,camera_direction };
@@ -163,9 +163,6 @@ int main()
 	clock_t t1, t2;
 	t1 = clock();
 
-	// Camera(s)
-	Camera* camera = new Camera(glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -1.f)));
-
 	// Light(s)
 	World* world = new World();
 
@@ -179,7 +176,6 @@ int main()
 	Material white_mat = { Color::WHITE, 0.1f, 1.0f, 1.0f, 128.0f };
 
 	// Geometry
-
 	glm::vec3 v0 = glm::vec3(0, 0, 0);
 	glm::vec3 v1 = glm::vec3(1, 0, 0);
 	glm::vec3 v2 = glm::vec3(1, 0, 1);
@@ -202,6 +198,9 @@ int main()
 
 	// Spheres
 	world->add_geometry(new Sphere(glm::translate(glm::mat4(1.0f), glm::vec3(0.2f, 0.3f, 0.7f)), &blue_mat, 0.1f));
+
+	// Camera(s)
+	Camera* camera = new Camera(glm::vec3(0.5f, 0.5, -2.0f), glm::rotate(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 
 	Image* image = ray_trace(world, camera);
 	image->save_PPM("test_render");
