@@ -31,24 +31,27 @@ Image* ray_trace(World* world, Camera* camera)
 {
 	Image* image = new Image(Settings::IMG_WIDTH, Settings::IMG_HEIGHT);
 
-	float aspect_ratio = Settings::IMG_WIDTH / (float)Settings::IMG_HEIGHT;
-	float scale = glm::tan(Settings::FOV * 0.5f);
+	const float ASPECT_RATIO = Settings::IMG_WIDTH / (float)Settings::IMG_HEIGHT;
+	const float SCALE = glm::tan(Settings::FOV * 0.5f);
 
 	//glm::vec3 origin = glm::vec4(0, 0.f, 0.f, 1.f) * camera->get_camera_to_world();
 	// For debugging purposes
-	glm::vec3 origin = camera->get_position();
+	const glm::vec3 origin = camera->get_position();
 
-	const int width = Settings::IMG_WIDTH;
-	const int height = Settings::IMG_HEIGHT;
+	const int WIDTH = Settings::IMG_WIDTH;
+	const int HEIGHT = Settings::IMG_HEIGHT;
+
+	const float INV_WIDTH = 1.0f / WIDTH;
+	const float INV_HEIGHT = 1.0f / HEIGHT;
 
 #pragma omp parallel
 #pragma omp for
-	for (int h = 0; h < height; h++)
+	for (int h = 0; h < HEIGHT; h++)
 	{
-		for (int w = 0; w < width; w++)
+		for (int w = 0; w < WIDTH; w++)
 		{
-			float x = (2.0f * (w + 0.5f) / width - 1.0f) * aspect_ratio * scale;
-			float y = (1.0f - 2.0f * (h + 0.5f) / height) * scale;
+			float x = (2.0f * (w + 0.5f) * INV_WIDTH - 1.0f) * ASPECT_RATIO * SCALE;
+			float y = (1.0f - 2.0f * (h + 0.5f) * INV_HEIGHT) * SCALE;
 
 			glm::vec3 camera_position = glm::vec3(x, y, origin.z);
 			glm::vec3 camera_direction = glm::vec4(x, y, 1.0f, 1.0f) * camera->get_rotation();

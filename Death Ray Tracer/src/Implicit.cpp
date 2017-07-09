@@ -81,9 +81,6 @@ Plane::~Plane()
 
 Intersection * Plane::intersection(Ray * ray)
 {
-	//glm::vec3 ray_pos_local = _world_to_local * glm::vec4(ray->origin, 1.0f);
-	//glm::vec3 ray_dir_local = _world_to_local *  glm::vec4(ray->direction, 1.0f);
-
 	// Plane form: Ax + Bx + Cz + D = 0
 	// a.k.a. N * p(x,y,z) + d = 0
 
